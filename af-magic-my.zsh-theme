@@ -3,7 +3,6 @@
 
 # color vars
 local c_line="$FG[237]"
-local my_orange="$FG[214]"
 
 #if [ $UID -eq 0 ]; then NCOLOR="red"; else NCOLOR="green"; fi
 local prompt_status="%(?.$FG[022]ok.%{$fg[red]%}%?)"
@@ -12,7 +11,7 @@ local prompt_time="$FG[240]%D{%Y-%m-%d %H:%M:%S.%.}"
 # git settings
 ZSH_THEME_GIT_PROMPT_PREFIX="$FG[023]"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
-ZSH_THEME_GIT_PROMPT_DIRTY="$my_orange*%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_DIRTY="$FG[214]*%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="$c_line │ "
 
 function prompt1_gen() {
