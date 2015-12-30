@@ -1,6 +1,9 @@
 #!/bin/zsh
 # af-magic-my.zsh-theme
 
+# Benchmark command:
+# time zsh -c '. ~/.zshrc ; for a in `seq 1 500` ; do ; print -P $PROMPT ; done'
+
 # color vars
 local prompt_c_line="$FG[237]"
 
@@ -74,14 +77,14 @@ function prompt_status() {
 
 	case $status_num in
 		0)
-			echo "$FG[022]ok"
+			prompt_status="$FG[022]ok"
 			;;
 		*)
 			if ((${+codes[$status_num]}))
 			then
-				echo "$fg[red]$status_num$FG[052]:$fg[red]${codes[$status_num]}"
+				prompt_status="$fg[red]$status_num$FG[052]:$fg[red]${codes[$status_num]}"
 			else
-				echo "$fg[red]$status_num"
+				prompt_status="$fg[red]$status_num"
 			fi
 			;;
 	esac
@@ -93,13 +96,26 @@ ZSH_THEME_GIT_PROMPT_CLEAN=""
 ZSH_THEME_GIT_PROMPT_DIRTY="$FG[214]*%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="$prompt_c_line │ "
 
+# Smart git prompt
+
+prompt_git_info() {
+    [[ $PWD == ${~GIT_PROMPT_EXCLUDE} ]] && return 0
+
+	ref=$(command git symbolic-ref HEAD 2> /dev/null) || \
+		ref=$(command git rev-parse --short HEAD 2> /dev/null) || \
+		return 0
+	if [[ "$(command git config --get oh-my-zsh.hide-status 2>/dev/null)" != "1" ]]; then
+		echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$(parse_git_dirty)$ZSH_THEME_GIT_PROMPT_SUFFIX"
+	fi
+}
+
 # Generates the first line of the prompt.
 function prompt1_gen() {
 	# Parse the exit status before anything else.
-	local status_str="$(prompt_status)"
+	prompt_status
 
 	# The inner text of the prompt.
-	local p="[ $(git_prompt_info)${status_str}$prompt_c_line │ ${prompt_time}$prompt_c_line ]"
+	local p="[ $(prompt_git_info)${prompt_status}$prompt_c_line │ ${prompt_time}$prompt_c_line ]"
 
 	# Delete color codes, so we know how long (in characters) the text is.
 	local zero='*m'
