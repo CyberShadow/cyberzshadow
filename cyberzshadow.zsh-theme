@@ -1,5 +1,22 @@
 #!/bin/zsh
-# af-magic-my.zsh-theme
+# cyberzshadow.zsh-theme
+#
+# An enhanced, optimized fork of af-magic.zsh-theme.
+#
+# Changes/highlights:
+#
+# - Full-width bar, to clearly delimit command output.
+# - Use Unicode line-drawing characters to draw the bar,
+#   to create a continuous line.
+# - Git status, exit code and ISO timestamp are right-aligned on the bar.
+# - The Git status has been moved out of the prompt line,
+#   to make more room for typing commands.
+# - Displays short textual exit status descriptions when applicable.
+# - No RPROMPT, as it interferes with mc.
+# - Optimized for speed. Allows excluding paths (e.g. mounted remote filesystems)
+#   from git status checks using GIT_PROMPT_EXCLUDE.
+# - Looks best with bitmap fonts.
+
 
 # Benchmark command:
 # time zsh -c '. ~/.zshrc ; for a in `seq 1 500` ; do ; print -P $PROMPT ; done'
