@@ -124,7 +124,7 @@ function prompt1_gen() {
 	local plen=${#${(S%%)p//$~zero/}}
 
 	# Right-align and pad the prompt text, and return the result.
-	echo "$prompt_c_line$(printf "─"%.0s {1..$(($COLUMNS-$plen-3))})$p──"
+	echo "$prompt_c_line$(printf "─"%.0s {1..$((${COLUMNS:-75}-$plen-3))})$p──"
 }
 
 # primary prompt
