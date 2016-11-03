@@ -57,6 +57,8 @@ function prompt_status() {
 		127 'noent'		# Not found
 		128 'badarg'	# Bad arguments
 
+		# as reported by the shell
+
 		129	'sighup'	# Hangup (POSIX).
 		130	'sigint'	# Interrupt (ANSI).
 		131	'sigquit'	# Quit (POSIX).
