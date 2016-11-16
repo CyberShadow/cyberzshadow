@@ -118,7 +118,7 @@ ZSH_THEME_GIT_PROMPT_SUFFIX="$prompt_c_line │ "
 # Smart git prompt
 
 prompt_git_info() {
-    [[ $PWD == ${~GIT_PROMPT_EXCLUDE} ]] && return 0
+	[[ $(realpath "$PWD") == ${~GIT_PROMPT_EXCLUDE} ]] && return 0
 
 	ref=$(command git symbolic-ref HEAD 2> /dev/null) || \
 		ref=$(command git rev-parse --short HEAD 2> /dev/null) || \
