@@ -147,10 +147,10 @@ function prompt1_gen() {
 }
 
 # primary prompt
-PROMPT='$(prompt1_gen)%{$reset_color%}
-$FG[032]%~ \
-%(!.$fg[red]#.$FG[105]»)%{$reset_color%} '
-PROMPT2='%{$fg[red]%}\ %{$reset_color%}'
+PROMPT='$(prompt1_gen)%{'$reset_color'%}
+'$FG[032]'%~ \
+%(!.'$fg[red]'#.'$FG[105]'»)%{'$reset_color'%} '
+PROMPT2='%{'$fg[red]'%}\ %{'$reset_color'%}'
 RPS1='${return_code}'
 
 
