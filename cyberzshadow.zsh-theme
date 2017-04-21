@@ -146,13 +146,19 @@ function prompt1_gen() {
 	echo "$prompt_c_line$(printf "─"%.0s {1..$((${COLUMNS:-75}-$plen-3))})$p──"
 }
 
+if [[ -n "$SSH_CONNECTION" ]]
+then
+	PROMPT_HOST=$FG[036]${HOST%%.*}$FG[023]:
+fi
+
 # primary prompt
 PROMPT='$(prompt1_gen)%{'$reset_color'%}
-'$FG[032]'%~ \
+'$PROMPT_HOST$FG[032]'%~ \
 %(!.'$fg[red]'#.'$FG[105]'»)%{'$reset_color'%} '
 PROMPT2='%{'$fg[red]'%}\ %{'$reset_color'%}'
 RPS1='${return_code}'
 
+unset PROMPT_HOST
 
 # right prompt
 # if type "virtualenv_prompt_info" > /dev/null
