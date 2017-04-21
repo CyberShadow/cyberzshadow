@@ -148,7 +148,7 @@ function prompt1_gen() {
 
 if [[ -n "$SSH_CONNECTION" ]]
 then
-	PROMPT_HOST=$FG[036]${HOST%%.*}$FG[023]:
+	PROMPT_HOST=$FG[036]${HOST%%.*}$FG[023]›
 fi
 
 # primary prompt
