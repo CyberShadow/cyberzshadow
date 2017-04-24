@@ -146,7 +146,7 @@ function prompt1_gen() {
 	echo "$prompt_c_line$(printf "─"%.0s {1..$((${COLUMNS:-75}-$plen-3))})$p──"
 }
 
-if [[ -n "$SSH_CONNECTION" ]]
+if [[ -n "$SSH_CONNECTION" || "${DISPLAY:-:0}" != ":0" ]]
 then
 	PROMPT_HOST=$FG[036]${HOST%%.*}$FG[023]›
 fi
