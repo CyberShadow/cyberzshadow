@@ -14,6 +14,8 @@ Changes/highlights:
  - The Git status has been moved out of the prompt line,
    to make more room for typing commands.
  - Displays short textual exit status descriptions when applicable.
+ - Displays short hostname, but only when running under an SSH session
+   or X11 forwarding.
  - No `RPROMPT`, as it interferes with `mc`.
  - Optimized for speed. Allows excluding paths (e.g. mounted remote filesystems)
    from git status checks using `GIT_PROMPT_EXCLUDE`.
