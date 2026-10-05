@@ -26,7 +26,7 @@ local prompt_c_line="$FG[237]"
 
 #if [ $UID -eq 0 ]; then NCOLOR="red"; else NCOLOR="green"; fi
 #local prompt_status="%(?.$FG[022]ok.%{$fg[red]%}%?)"
-local prompt_time="$FG[240]%D{%Y-%m-%d %H:%M:%S.%.}"
+local prompt_time_fmt='%Y-%m-%d %H:%M:%S.%.'
 
 function prompt_status() {
 	# Get the exit code.
@@ -128,13 +128,26 @@ prompt_git_info() {
 	fi
 }
 
-# Generates the first line of the prompt.
-function prompt1_gen() {
+# Generates the inner text of the first line of the prompt.
+# Runs once per prompt, so that redraws (e.g. on window resize)
+# don't re-run git or change the status / timestamp.
+function prompt_bar_precmd() {
 	# Parse the exit status before anything else.
 	prompt_status
 
+	local prompt_time
+	print -Pv prompt_time -- "%D{$prompt_time_fmt}"
+
+	prompt_bar_text="[ $(prompt_git_info)${prompt_status}$prompt_c_line │ $FG[240]${prompt_time}$prompt_c_line ]"
+	prompt_bar_final=
+}
+# Must run first, as it reads $?.
+precmd_functions=(prompt_bar_precmd $precmd_functions)
+
+# Generates the first line of the prompt.
+function prompt1_gen() {
 	# The inner text of the prompt.
-	local p="[ $(prompt_git_info)${prompt_status}$prompt_c_line │ ${prompt_time}$prompt_c_line ]"
+	local p=$prompt_bar_text
 
 	# Delete color codes, so we know how long (in characters) the text is.
 	local zero='*m'
@@ -146,13 +159,47 @@ function prompt1_gen() {
 	echo "$prompt_c_line$(printf "─"%.0s {1..$((${COLUMNS:-75}-$plen-3))})$p──"
 }
 
+# urxvt re-wraps lines on resize according to their recorded length,
+# which desyncs zle's redraw of the multi-line prompt (leaving fragments
+# of the old bar behind). Zero the bar's recorded length while it is
+# live, so that urxvt truncates instead of re-wrapping it: DCH at the
+# last column decrements it without visible change, then CHA to the
+# first column so that the following newline doesn't restore it.
+# Once the line is accepted, redraw without this so that the bar
+# re-wraps normally in scrollback. A no-op on other terminals.
+function prompt_bar_suffix() {
+	[[ -n $prompt_bar_final ]] && return
+	printf '\e[P%.0s' {1..$COLUMNS}
+	printf '\e[G'
+}
+
+function prompt_bar_finalize() {
+	[[ -n $prompt_bar_final ]] && return
+	prompt_bar_final=1
+	zle reset-prompt
+	zle -R
+}
+autoload -Uz add-zle-hook-widget
+add-zle-hook-widget line-finish prompt_bar_finalize
+
+# Ctrl+C at the prompt aborts zle without a redraw after line-finish,
+# and the new prompt is then printed without running precmd.
+function TRAPINT() {
+	if zle
+	then
+		prompt_bar_finalize
+		(exit $(( 128 + $1 ))) ; prompt_bar_precmd
+	fi
+	return $(( 128 + $1 ))
+}
+
 if [[ -n "$SSH_CONNECTION" || ( "${DISPLAY:-:0}" != ":0" && "${DISPLAY:-:0}" != ":0.0" ) ]]
 then
 	PROMPT_HOST=$FG[036]${HOST%%.*}$FG[023]›
 fi
 
 # primary prompt
-PROMPT='$(prompt1_gen)%{'$reset_color'%}
+PROMPT='$(prompt1_gen)%{$(prompt_bar_suffix)'$reset_color'%}
 '$PROMPT_HOST$FG[032]'%~ \
 %(!.%{'$fg[red]'%}#.'$FG[105]'»)%{'$reset_color'%} '
 PROMPT2='%{'$fg[red]'%}\ %{'$reset_color'%}'
