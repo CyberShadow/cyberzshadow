@@ -101,9 +101,9 @@ function prompt_status() {
 		*)
 			if ((${+codes[$status_num]}))
 			then
-				prompt_status="$fg[red]$status_num$FG[052]:$fg[red]${codes[$status_num]}"
+				prompt_status="%{$fg[red]%}$status_num$FG[052]:%{$fg[red]%}${codes[$status_num]}"
 			else
-				prompt_status="$fg[red]$status_num"
+				prompt_status="%{$fg[red]%}$status_num"
 			fi
 			;;
 	esac
@@ -154,7 +154,7 @@ fi
 # primary prompt
 PROMPT='$(prompt1_gen)%{'$reset_color'%}
 '$PROMPT_HOST$FG[032]'%~ \
-%(!.'$fg[red]'#.'$FG[105]'»)%{'$reset_color'%} '
+%(!.%{'$fg[red]'%}#.'$FG[105]'»)%{'$reset_color'%} '
 PROMPT2='%{'$fg[red]'%}\ %{'$reset_color'%}'
 RPS1='${return_code}'
 
